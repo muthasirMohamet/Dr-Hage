@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Bootstrap Sidebar with Buttons and Tables</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        #header {
+            background-color: #343a40; /* Dark background */
+            color: white; /* White text */
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between; /* Space between items: company name and user info */
+            align-items: center;
+            font-size: 14px; /* Adjusted font size as needed */
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            left: 0; /* Align with the sidebar */
+            transition: left 0.3s; /* Smooth transition */
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between; /* Space between company name and user info */
+            width: 100%; /* Take full width of the header */
+        }
+
+        .header-content > div {
+            margin: 0; /* Remove default margin for alignment */
+        }
+
+
+
+                /* Sidebar Styling */
+                #sidebar {
+                    width: 270px;
+                    transition: all 0.3s;
+                    padding: 0;
+                    display: flex;
+                    flex-direction: column;
+                    position: fixed;
+                    top: 40px; /* Adjust to be below the header */
+                    left: 0;
+                    bottom: 0; /* Extend to the bottom */
+                    z-index: 999;
+                    overflow-y: auto;
+                }
+
+                #sidebar.collapsed {
+                    width: 80px;
+                }
+
+                #sidebar .nav-link {
+                    display: flex;
+                    align-items: center;
+                    padding: 0.5rem 1rem;
+                    white-space: nowrap;
+                    text-align: left;
+                }
+
+                #sidebar .nav-link i {
+                    font-size: 1.5rem;
+                    margin-right: 1rem;
+                }
+
+                #sidebar.collapsed .nav-link i {
+                    margin-right: 0;
+                }
+
+                #sidebar.collapsed .nav-link span {
+                    display: none;
+                }
+
+                #sidebar.collapsed .nav-link {
+                    justify-content: center;
+                }
+
+                /* Position Logout at the bottom */
+                #sidebar .nav-item:last-child {
+                    margin-top: auto;
+                }
+
+                /* Toggle Button Styling */
+                #toggleBtn {
+                    font-size: 1.5rem;
+                    width: 35px;
+                    height: 35px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    padding: 0;
+                    position: fixed;
+                    top: 70px; /* Adjust to align with the collapsed sidebar */
+                    left: 290px; /* Position next to the sidebar */
+                    z-index: 100;
+                    transition: left 0.3s;
+                }
+
+                #toggleBtn.collapsed {
+                    left: 90px;
+                }
+
+                /* Button Styling */
+                .btn-custom {
+                    height: 100px;
+                    width: 150px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1rem;
+                    border-radius: 15px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    color: white;
+                    background-color: #007bff;
+                    margin-top: 50px;
+                }
+
+                .btn-expand {
+                    width: 100%;
+                }
+
+                .btn-custom i {
+                    font-size: 2rem;
+                    margin-right: 0.5rem;
+                }
+
+                .btn-custom span {
+                    display: inline;
+                }
+
+                .btn-expand, .btn-custom:hover {
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+                }
+
+                /* Table Styling */
+                .table-container {
+                    padding: 1rem;
+                    background-color: #f8f9fa;
+                    border-radius: 15px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                }
+
+                /* Search Input Styling */
+                .search-input {
+                    margin-bottom: 1rem;
+                }
+
+                /* Ensure the main content aligns with the sidebar */
+                .main-content {
+                    margin-left: 270px; /* Align with sidebar */
+                    transition: margin-left 0.3s;
+                    margin-top: 60px; /* Add top margin to account for fixed header */
+                    font-size: 8px; /* Set font size to 8px */
+                }
+
+                #sidebar.collapsed + .main-content {
+                    margin-left: 80px; /* Adjust when sidebar is collapsed */
+                }
+
+                /* Reduce text size in Appointment List section */
+                .table-container h4 {
+                    font-size: 12px; /* Adjusted to 8px */
+                }
+                .table-container table {
+                    font-size: 9px; /* Adjusted to 8px */
+                }
+    </style>
+</head>
+<body>
+<!-- Header with Company Name and User Info -->
+<div id="header">
+    <div class="header-content">
+        <div>Dr Jiheeye</div>
+        <div>
+            <span id="username">John Doe</span> | <span id="title">Admin</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white d-flex flex-column" id="sidebar">
+        <div class="flex-grow-1">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-person-fill"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/doctorList">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Doctor Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Customer Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/appointmentList">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Appointment Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span>Messages</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <a class="nav-link text-white" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="p-4 flex-grow-1 position-relative main-content">
+        <!-- Toggle Button -->
+        <button class="btn btn-dark" id="toggleBtn">
+            <i class="bi bi-house-door-fill"></i>
+        </button>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <a class="btn btn-primary" href="/appointmentList/appointmentForm">Add New Appointment</a>
+            </div>
+        </div>
+
+        <!-- Appointment List -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="table-container">
+                    <h4>Appointment List</h4>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Sex</th>
+                            <th>Date of Birth</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Appointment Description</th>
+                            <th>Status</th>
+                            <th>Assigned Doctor</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="appointment : ${appointments}">
+                            <td th:text="${appointment.id}"></td>
+                            <td th:text="${appointment.name}"></td>
+                            <td th:text="${appointment.sex}"></td>
+                            <td th:text="${appointment.dob}"></td>
+                            <td th:text="${appointment.phone}"></td>
+                            <td th:text="${appointment.email}"></td>
+                            <td th:text="${appointment.address}"></td>
+                            <td th:text="${appointment.date}"></td>
+                            <td th:text="${appointment.time}"></td>
+                            <td th:text="${appointment.appointmentdescribtion}"></td>
+                            <td th:text="${appointment.status}"></td>
+                            <td th:text="${appointment.assigndoctor}"></td>
+                            <td>
+                                <a class="btn btn-warning btn-sm" th:href="@{/appointmentList/edit/{id}(id=${appointment.id})}">Edit</a>
+                                <a class="btn btn-danger btn-sm" th:href="@{/appointmentList/delete/{id}(id=${appointment.id})}">Delete</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('toggleBtn').addEventListener('click', function () {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.getElementById('toggleBtn');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('collapsed');
+        toggleBtn.classList.toggle('collapsed');
+    });
+</script>
+</body>
+</html>
